@@ -161,6 +161,10 @@ allowed, provided the experience established in stage two remains intact.
 - Restructure engine modules and platform/dependency boundaries to make the
   code easier to build, reason about, test, and maintain.
 - Remove dependencies and compatibility code that are demonstrably obsolete.
+- Modernize audio around OpenAL Soft and a modern C++ ownership layer; replace
+  ALURE incrementally while retaining the original assets and sound behavior.
+  Pin settings and verify audio fidelity as described in the
+  [architecture direction](ARCHITECTURE.md#audio-modernization-direction).
 - Check changes incrementally against stage two's behavioral reference; document
   architectural tradeoffs and the lessons from each migration.
 

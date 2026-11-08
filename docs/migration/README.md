@@ -17,12 +17,19 @@ we learned. It complements the [practical guides](../guides/README.md).
 | D-008 | Serve us initially and maintain both practical docs and migration history. | Public release planning is not a prerequisite; understanding the engineering journey is a deliverable. |
 | D-009 | The 1999 retail game defines fidelity; the published 2020 source is the implementation starting point. | The user does not have the 1999 source code, and obtaining it is not required. Compare observable retail behavior, and distinguish retail quirks from differences introduced by the 2020 port or our migration. |
 | D-010 | Establish ground zero before further Vulkan conversion: reproduce the OpenGL game with the upstream Linux-container build, then build/run it natively on Windows 11 without the container. | Determine the actual starting behavior and separate build-environment problems from game-code problems. The current work proceeds from the 2020 source without waiting for a retail comparison setup. |
+| D-011 | For stage three, prefer OpenAL Soft with a modern C++ audio layer and incremental ALURE replacement, preserving audio assets and behavior. | Retaining existing OpenAL semantics reduces migration risk. Pin versions/settings and verify fidelity; identical output is not guaranteed by the library. Miniaudio remains an alternative if broader replacement is justified. See the [audio architecture direction](../ARCHITECTURE.md#audio-modernization-direction). |
 
 These decisions summarize the discussion on 2026-11-08. The [project brief](../PROJECT_BRIEF.md)
 contains the scope and unresolved questions; the [roadmap](../ROADMAP.md) contains
 the stage contracts.
 
 ## Initial implementation history
+
+Ground-zero experiments:
+
+- [First OpenGL build](0001-opengl-first-run.md): build setup and initial CRT link failure.
+- [ALURE rebuild](0002-alure-rebuild.md): matching compiler/runtime dependency rebuild and successful game linkage.
+- [FreeType, first launch, and music](0003-freetype-and-music.md): successful Windows launch, stop request, and headless verification of the music decoder filename fix.
 
 - Obtained Nightdive's published source at
   `2c857564ac9145fa8913ed57e533a5069faf7662` and created the project fork.

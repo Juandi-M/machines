@@ -37,8 +37,9 @@ We also need practical instructions and an engineering history so the result can
 be understood, reproduced, maintained, and evaluated later.
 
 This is the project's verified gap, not a claim that every existing Machines
-release fails on Windows 11. We have not yet built or run the full game from this
-source in this workspace.
+release fails on Windows 11. The OpenGL source has now compiled and linked after
+build-environment and ALURE dependency adjustments; the full game has not yet
+been launched or validated in this workspace.
 
 ## 3. Vision and intended audience
 
@@ -151,8 +152,8 @@ need their own documented treatment.
 | Vulkan foundation | Standalone SDL/Vulkan presentation context and a smoke executable exist. |
 | Shader work | Five translated shaders compile to SPIR-V; shader interfaces have been checked. |
 | Prototype execution | Previously presented 120 frames on Windows 11 / RTX 4080 SUPER and passed isolated software-driver validation checks. |
-| Full game | Still follows the OpenGL path; has not been built or run in this experiment. |
-| Playable assets | Complete runtime assets have not been assembled here. |
+| Full game | The reference OpenGL source compiled, linked with repaired dependencies, and displayed its loading screen and opening movie on Windows 11. It was stopped at the user's request due to active runners; further launches require explicit go-ahead. Gameplay and multiplayer remain unverified. The full conversion/Vulkan game is not built. |
+| Playable assets | Community assets and source metadata supported the initial launch. A music decoder DLL filename mismatch was repaired; all ten Ogg music tracks passed headless decoding. Audible in-game playback remains unverified. |
 | Stage one | In progress at the prototype level; its completion milestone has not been reached. |
 
 The prototype's successful checks demonstrate its own behavior. They do not

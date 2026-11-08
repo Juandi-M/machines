@@ -188,6 +188,50 @@ Specific language standards, dependency replacements, compiler support, and
 module boundaries remain to be agreed. No whole-engine design is being declared
 final during this initial documentation round.
 
+### Audio modernization direction
+
+Recorded on 2026-11-08: prefer **OpenAL Soft with a modern C++ audio layer**,
+and incrementally replace the old ALURE loading/streaming helper. This is the
+stage-three direction, not an immediate dependency migration. Exact versions,
+interfaces, and replacement decoder/streaming components remain to be selected.
+
+The current source already uses OpenAL sources and buffers, listener position
+and orientation, source gain, distance parameters, and looping, notably in
+`original/src/libdev/sound/alsample.cpp` and `alsound.cpp`. Retaining these API
+semantics reduces the behavior we would otherwise need to recreate. OpenAL Soft
+is a maintained implementation of that API; an older API does not require an
+obsolete implementation. See the [project](https://openal-soft.org/) and
+[release history](https://github.com/kcat/openal-soft/releases).
+
+Modernize ownership and cleanup of devices, contexts, buffers, and sources;
+make decoding and streaming explicit and maintainable. Preserve the original
+audio assets without recompression. Replace ALURE incrementally, checking its
+loading, playback, and streaming behavior before removing the old path.
+
+Pin the OpenAL Soft version and explicitly record output configuration,
+resampling, spatialization, and relevant mixer settings. Do not enable new HRTF,
+reverb, or other sound processing by default as part of modernization. Match
+the established reference settings and behavior rather than assuming library
+defaults preserve them.
+
+Acceptance comparisons must cover volume and distance falloff, stereo/3D
+positioning, listener orientation, pitch, playback timing, overlapping sounds
+and source limits, finite/infinite loops, music transitions, pause/resume, and
+streaming continuity. Use repeatable scenarios and reference recordings with
+matched assets, hardware, and output settings; define tolerances before accepting
+the replacement. Record any retained quirks and their reference provenance.
+
+No library choice guarantees identical audio output. The faithful stage-two
+build is the migration reference, with the 1999 retail experience remaining the
+fidelity authority. Differences already present in the 2020 port must not be
+mistaken for verified retail behavior.
+
+[Miniaudio](https://miniaud.io/docs/manual/) is the alternative if a full playback
+architecture replacement becomes justified. It provides mixing and spatialization,
+but mapping the existing OpenAL behavior would add preservation work. FMOD and
+Wwise were considered as broader audio systems; no move to either is planned
+for this preservation-focused modernization.
+
 ## 7. Verification and architectural records
 
 Keep practical procedures in [guides](guides/README.md) and decisions, changes,

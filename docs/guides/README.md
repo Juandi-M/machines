@@ -6,6 +6,7 @@ and whether they apply to the full game or only a prototype.
 
 ## Available
 
+- [OpenGL music setup](OPENGL_MUSIC.md): prepare the ALURE decoder filename without launching the game.
 - [Vulkan bootstrap](VULKAN_BOOTSTRAP.md): standalone presentation build/run
   instructions and previously recorded verification. This does not build or run
   the complete game.
