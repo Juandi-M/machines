@@ -1,108 +1,153 @@
-# Machines: Wired For War
-### 3D Real Time Strategy video game GL port source code
-Released as a [free software](https://en.wikipedia.org/wiki/Free_software) under a permission of [Night Dive Studios](https://www.nightdivestudios.com/) who owns the rights to the game.
+# Machines migration workspace
 
-**Followed conventions:**
-- file names use a DOS convention (8 chars + 3 for extension), not strictly followed any more,
-- macros are all UPPER_CASE in code, sometimes it may be enum cases, 
-- classes are named WithUpperCaseLetter on the beginning and between words,
-- class private members are named with dash on the end someVar_ and with lower case on the beginning,
-- pointer names start from p pPointerVar_,
-- some class members are "seamleslly" declared from implClass with CB_DEPIMPL macro, 
-- use _NEW, _NEW_ARRAY, _DELETE, _DELETE_ARRAY, _STATIC_CAST, _CONST_CAST macros instead,
-- comments added now to cut out the code starts from the beginning of the line// (no spaces before),
-- std::string and string are different classes - the second one is added to support persistence (dump to/load from binfile),
-- old watcom compiler did not support namespaces,
-- templates were instantiated explicitly in separate sources, this was commented out in most of the cases (not sure if it was reasonable),
+This entire project is one Git repository, rooted in this directory. It contains
+the untouched reference source, the conversion source, and project documentation.
+Run repository-wide Git commands here; run builds against the appropriate source
+folder.
 
-**The main code is spilt into a set of libraries:**
-- afx - SDL app window creation, string resources handling,
-- ani - smacker animations,
-- base - compiler type things, new and delete overloaded global operators, leak and stack tracker (not used), persistence and logging mechanisms,
-- ctl - charybdis template library - this was created to improve STL functionality, now it is a wrapper around gnu stl - note it uses public inheritance from std containers, found no problems yet? Only ctl containers support persistence,
-- device - mice, keyboards, timers, (back when they did that stuff and didn't just rely on direct x), cd audio (music track),
-- envirnmt - maps, sky loading code,
-- gui - base classes for gui concepts (buttons, list, scrolling dialog windows and such like),
-- gxin - parser for old .agt text format meshes,
-- machgui - the real machines based UI,
-- machlog - the logic stuff, AI, choosing levels and such like,
-- machphys - the renderable bits of machines (agressors, administrators, mines, etc),
-- mathex - maths libraries,
-- network - low level communication layer,
-- phys - base classes of some physics types things - this is NOT real time physics - by how to fiddle it,
-- profiler - not used now,
-- recorder - allows to record and replay all the  in game activity, events, random seeds etc. Game works in single thread, useful when reproducing a bug (not checked if it works),
-- render - base library for rendering primitives, triangles, meshes, textures, materials, surfaces, etc,
-- sim - base classes for things that can be simulated,
-- sound - loading and playing wave samples 2D/3D,
-- stdlib - now a little has left from it (there was cout, cerr, etc ),
-- system - mostly file device handling, msgbox, metafile, registry (xml config),
-- utility - helpers of various types, e.g. file parsers. again a lot of this stuff you wouldn't bother with now but back then there was no source forge or even google, 
-- world4d - built on top of the render libraries, turned basic rendering into multi-mesh entities (W4dEntity is a base class for lot of things),
-- xin - .X mesh file loading into game engine (added now),
+```text
+machines-game-experiment/
+  .git/                     Git history for the whole project
+  original/                 Untouched upstream source, pinned baseline
+  conversion/               Working fork, Vulkan migration
+  docs/                     Shared brief, roadmap, architecture, guides, history
+  README.md                 Project introduction and documentation index
+  workspace.json            Checkout locations and source baseline
+```
 
-**Build dependencies**
-Use provided Docker image for building or manually setup your environment.
+| Source folder | Baseline | Purpose |
+| --- | --- | --- |
+| `original` | Unmodified snapshot of `2c857564ac9145fa8913ed57e533a5069faf7662` | Source and behavior reference |
+| `conversion` | Same baseline, with migration changes | Vulkan conversion and later modernization |
 
-libsdl2-dev libsdl2-image-dev libopenal-dev libalure-dev libenet-dev libfreetype6-dev libglew-dev libglm-dev libaudio-dev
+The project branch is `vulkan-port`. The root repository's `origin` is
+https://github.com/Juandi-M/machines and `upstream` is
+https://github.com/NightDive-Studio/machines.
 
-**Building**
-git clone && git lfs pull
-- Windows exe on linux/docker:
-`sudo apt-get install mingw-w64`
-`mkdir buildMingw64 && cd buildMingw64`
-`cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-mingw64.cmake ..`
-or 32-bit
-`mkdir buildMingw32 && cd buildMingw32`
-`cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-mingw32.cmake -DBUILD_32=1 ..`
-Extra parameters for release optimizations: 
-`-DCMAKE_BUILD_TYPE=RELEASE -DDEV_BUILD=OFF`
+The released baseline is a 2020 OpenGL port of the 1999 game. Here, "original"
+means this unmodified released source, not the untouched 1999 DirectX code.
+Neither source folder contains a nested Git repository or a submodule. Git at the
+project root tracks both source trees and the documentation. The previous
+reference clone's Git metadata is preserved locally in
+`.git/layout-backup/original.git`; it is not part of the source tree or a file
+to publish. Root Git LFS storage and upstream history have been preserved.
 
-- For linux:
-`mkdir build && cd build`
-`cmake ..`
-`make -j 9`
+## Documentation
 
-**Class invariant checks**
-`export CB_INVARIANT_CHECKING=on`
+- [Project brief](docs/PROJECT_BRIEF.md): introduction, problem statement, vision,
+  agreed goals, scope, preservation policy, current state, and open decisions.
+- [Roadmap](docs/ROADMAP.md): the three agreed stages, work areas, and completion
+  criteria, with unresolved acceptance details marked explicitly.
+- [Architecture](docs/ARCHITECTURE.md): observed code organization, current Vulkan
+  prototype, constraints, and proposed migration boundaries.
+- [Practical guides](docs/guides/README.md): build, run, test, and maintenance
+  procedures, starting with the standalone Vulkan bootstrap.
+- [Migration record](docs/migration/README.md): decisions, implementation history,
+  original bugs, changes, validation, and lessons.
 
-**Debug streams**
-To turn on a stream define environment variable with correct name, eg. `set CB_HAL_TO=cout` or in linux shell `export CB_HAL_TO=cout`.
-Target cout is a current shell of course, replace it with filename to write log into or leave empty to turn off.
-Avaiable streams: (*base/diag.hpp*)
-- BOB
-- HAL
-- IAIN
-- JERRY
-- RICHARD
-- JON
-- YUEAI
-- LIONEL
-- CERI
-- NEIL
-- MISC
-- WHERE
-- TRACE
-- MEMORY
-- RENDER
-- PER_READ
-- PER_WRITE
-- NETWORK
-- WAYNE
-- DANIEL
-- MOTSEQ
-- CS2PATH         // Config space pathfinding stuff (domain and normal)
-- CS2VGRA         // Visibility graph diagnostics
-- OBSERVER        // trapping observer pattern problems - stream added to due volume of output
-- PATH_PROFILE    // Debugging the path profile across the planet surface
-- SOUND
-- REC_RECORD
-- REC_PLAYBACK
-- NET_ANALYSIS
-- A_STAR
-- LINEAR_TRAVEL      // Stream for use by PhysLinearTravelPlan
-- PLANET_SURFACE     // Used for reporting errors in a planet surface
-- PHYS_MOTION        // Physical motion stream
-- NETWORK_ERRORS     // Specifically to help us spot network errors (such as loss of synchronicity)
-- MEX_GRID2D
-- CONFIG_SPACE
+These are working drafts that distinguish agreed decisions, observed facts, and
+open questions. The ongoing discussion will refine them.
+
+## Source preservation
+
+- Keep `original` unchanged at its recorded source baseline. Build it out of tree and run it from a
+  separate runtime directory so generated files, settings, and saves do not
+  alter the reference checkout.
+- Make all code, dependency, build-system, and renderer changes in `conversion`.
+  Preserve the upstream directory structure so corresponding files remain easy
+  to compare. Use Git history to record migrations rather than copying changed
+  source back into the reference folder.
+- Keep the same gameplay, simulation timing, AI, assets, and rendering intent.
+  Treat an intentional behavior change as a separate decision.
+- Compare both executables with the same assets, scenario, settings, and
+  hardware. Give each run separate writable settings/saves/logs.
+- Validate one change at a time: toolchain, dependency, platform boundary, then
+  rendering capability. Do not combine a renderer port with a game-logic rewrite.
+
+The reference source is protected by this workflow, not by filesystem ACLs.
+Review changes to `original/` separately; ordinary migration work belongs in
+`conversion/`. Every reference file was verified byte-for-byte during the
+repository layout correction. Once this layout is committed, use
+`git diff HEAD -- original/` to check for reference changes.
+
+## Architecture direction
+
+The existing engine remains the application. Its game-facing rendering classes
+are the starting point for the boundary that will isolate the graphics API:
+
+```text
+Game logic and simulation (machlog, sim)
+              |
+Scene, entities, and animation (world4d, machphys)
+              |
+Existing rendering contracts (RenDevice, RenSurface, RenTexture, RenDisplay)
+              |
+Graphics backend implementation
+       +------+------+
+       |             |
+  OpenGL reference   Vulkan implementation
+```
+
+This is the target boundary, not a description of a completed abstraction.
+The existing render headers still expose OpenGL types, and GL calls also appear
+outside `device.cpp`. The new Vulkan context is a presentation foundation;
+it is not yet plugged into the game's render contracts.
+
+The two complete source trees provide the reference and conversion executables.
+Inside `conversion`, retaining an OpenGL path temporarily can also help compare
+the same refactored code through both backends. The migration's end state is
+Vulkan; reference support is useful only while bringing that implementation up.
+
+## Agreed stages
+
+**Ground zero:** build and run the existing OpenGL game through the upstream
+Linux/Docker cross-build procedure, then establish its native Windows 11 build
+without that container. Both experiments precede further Vulkan integration.
+
+1. **Complete playable Vulkan port on Windows 11.** Every existing game feature,
+   including multiplayer, must be playable. Known bugs are acceptable; missing
+   or unplayable features do not meet this milestone.
+2. **Faithful stabilization.** Fix migration regressions and verify the original
+   experience. Preserve inherited bugs and quirks by default, documenting them
+   for separate decisions later.
+3. **Modern internals, original experience.** Modernize C++, dependencies, and
+   architecture as much as practical while retaining the same gameplay, graphics
+   style, and assets.
+
+Both practical build/maintenance guides and a detailed migration record are
+project deliverables. The project brief, separate roadmap, and architecture drafts
+are in the shared `docs/` directory and will develop through the planning discussion.
+The **1999 retail game is the authority for fidelity**. The published 2020 source
+is our implementation starting point; access to the 1999 source code is not
+required. Reference-game execution and comparison procedures still need setup.
+
+See the [Vulkan bootstrap guide](docs/guides/VULKAN_BOOTSTRAP.md) for the
+implemented presentation prototype, its verification, and the remaining work.
+
+## Current executable and build directories
+
+The tested presentation executable moved intact to:
+
+```powershell
+.\conversion\build\vulkan-windows\machines-vulkan-smoke.exe --frames 120 --exercise-window
+```
+
+Existing build caches were retained during relocation and may contain absolute
+paths from the former checkout location. Create a fresh build directory rather
+than reusing those caches. New native builds should start from `conversion`:
+
+```powershell
+Set-Location conversion
+cmake -S . -B build/vulkan-native -DMACHINES_VULKAN_BOOTSTRAP=ON
+cmake --build build/vulkan-native --config Release
+```
+
+The compiler and shader-tool prerequisites are documented in the port guide.
+For container builds, bind `conversion` itself to `/work`. A container created
+before restructuring has the old parent mount; create a new container with the
+correct source mount before building again.
+
+For a reference build, use a directory outside `original`, for example
+`cmake -S original -B build/original`, with the original toolchain/dependencies
+configured appropriately. This example specifies the directory layout; it is
+not a claim that the legacy game currently builds with the host toolchain.

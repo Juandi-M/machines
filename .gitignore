@@ -1,0 +1,6 @@
+/build/
+/.deps/
+/original/build/
+/original/.deps/
+/conversion/build/
+/conversion/.deps/

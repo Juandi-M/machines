@@ -1,0 +1,22 @@
+{
+  "baseline": {
+    "repository": "https://github.com/NightDive-Studio/machines.git",
+    "commit": "2c857564ac9145fa8913ed57e533a5069faf7662",
+    "description": "Unmodified published OpenGL source release"
+  },
+  "repository": {
+    "path": ".",
+    "url": "https://github.com/Juandi-M/machines.git",
+    "branch": "vulkan-port",
+    "layout": "single-repository"
+  },
+  "original": {
+    "path": "original",
+    "role": "untouched-source-snapshot"
+  },
+  "conversion": {
+    "path": "conversion",
+    "graphicsTarget": "Vulkan",
+    "runtimeBaseline": "1.1"
+  }
+}
